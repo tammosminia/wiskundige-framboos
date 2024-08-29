@@ -87,11 +87,15 @@ def aStar(maze: Maze): Option[Path] = {
   // Paths are sorted from shortest (distance + heuristic) to longest
   // This ensures we always consider the most promising paths first
   def solution(paths: SortedSet[(Int, Path)]): Option[Path] =
-    paths.headOption.flatMap { case (hue, path) =>
+    paths.headOption.flatMap { case (_, path) =>
       if (pathLeadsTo(maze, path) == maze.finish) {
         Some(path)
       } else {
-        val newPaths = possibleStepsAhead(maze, path).map(step => (heuristic(step.destination), path.appended(step)))
+        val newPaths = possibleStepsAhead(maze, path).map { step =>
+          val newPath = path.appended(step)
+          val minValue = newPath.length + heuristic(step.destination)
+          (minValue, newPath)
+        }
         solution(paths.tail.concat(newPaths))
       }
     }
