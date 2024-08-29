@@ -19,7 +19,7 @@ type Path = List[Step]
 // Helper functions
 def go(from: Location, d: Direction): Location = ???
 def takeStep(from: Location, d: Direction): Step = ???
-def randomElement[T](l: List[T]): T = ???
+def randomElement[T](l: Iterable[T]): T = ???
 def pathLeadsTo(maze: Maze, path: Path): Location = path.lastOption.map(_.destination).getOrElse(maze.start)
 
 
@@ -29,7 +29,7 @@ def simple(maze: Maze): Path = {
     if (currentLocation == maze.finish) path
     else {
       // Choose the next step at random
-      val direction = randomElement(maze.possibleDirections(l))
+      val direction = randomElement(maze.possibleDirections(currentLocation))
       val step = takeStep(currentLocation, direction)
       solution(path.appended(step))
     }
@@ -87,9 +87,9 @@ def aStar(maze: Maze): Option[Path] = {
   // Paths are sorted from shortest (distance + heuristic) to longest
   // This ensures we always consider the most promising paths first
   def solution(paths: SortedSet[(Int, Path)]): Option[Path] =
-    paths.headOption.map { case (hue, path) =>
+    paths.headOption.flatMap { case (hue, path) =>
       if (pathLeadsTo(maze, path) == maze.finish) {
-        path
+        Some(path)
       } else {
         val newPaths = possibleStepsAhead(maze, path).map(step => (heuristic(step.destination), path.appended(step)))
         solution(paths.tail.concat(newPaths))
@@ -97,5 +97,5 @@ def aStar(maze: Maze): Option[Path] = {
     }
 
   implicit val order: Ordering[(Int, Path)] = Ordering.by(_._1)
-  solution(SortedSet(Int.MaxValue, List.empty))
+  solution(SortedSet((Int.MaxValue, List.empty)))
 }
