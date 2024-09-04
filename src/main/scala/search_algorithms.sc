@@ -21,9 +21,17 @@ def go(from: Location, d: Direction): Location = ???
 def takeStep(from: Location, d: Direction): Step = ???
 def randomElement[T](l: Iterable[T]): T = ???
 def pathLeadsTo(maze: Maze, path: Path): Location = path.lastOption.map(_.destination).getOrElse(maze.start)
+// determine possible next steps without going backwards
+def possibleStepsAhead(maze: Maze, path: Path): Set[Step] = {
+  val currentLocation = pathLeadsTo(maze, path)
+  // All locations we can go from here
+  val possibleSteps = maze.possibleDirections(currentLocation).map(takeStep(currentLocation, _))
+  // Drop locations we've already visited
+  possibleSteps.filterNot(path.map(_.destination).contains)
+}
 
 
-def simple(maze: Maze): Path = {
+def randomWalk(maze: Maze): Path = {
   def solution(path: Path): Path = {
     val currentLocation = pathLeadsTo(maze, path)
     if (currentLocation == maze.finish) path
@@ -36,15 +44,6 @@ def simple(maze: Maze): Path = {
   }
 
   solution(List.empty)
-}
-
-// new helper function to determine possible next steps without going backwards
-def possibleStepsAhead(maze: Maze, path: Path): Set[Step] = {
-  val currentLocation = pathLeadsTo(maze, path)
-  // All locations we can go from here
-  val possibleSteps = maze.possibleDirections(currentLocation).map(takeStep(currentLocation, _))
-  // Drop locations we've already visited
-  possibleSteps.filterNot(path.map(_.destination).contains)
 }
 
 def depthFirst(maze: Maze): Option[Path] = {
@@ -65,15 +64,19 @@ def depthFirst(maze: Maze): Option[Path] = {
   solution(List.empty)
 }
 
-def breathFirst(maze: Maze): Option[Path] = {
+def breadthFirst(maze: Maze): Option[Path] = {
   def solution(paths: List[Path]): Option[Path] = {
     val newPaths = paths.flatMap { path =>
       possibleStepsAhead(maze, path)
         .map(path.appended)
     }
-    newPaths
-      .find(path => pathLeadsTo(maze, path) == maze.finish) // Return the solution if we have it
-      .orElse(solution(newPaths)) // or go on with all paths of one step longer
+    if (newPaths.isEmpty) {
+      None
+    } else {
+      newPaths
+        .find(path => pathLeadsTo(maze, path) == maze.finish) // Return the solution if we have it
+        .orElse(solution(newPaths)) // or go on with all paths of one step longer
+    }
   }
 
   solution(List(List.empty))
