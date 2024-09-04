@@ -22,7 +22,7 @@ def findParcelsForUsersWithSort(parcels: List[Parcel], users: List[User]): List[
 // complexity creating a hashed set = O(n)
 // complexity of hashing users = O(nUsers)
 // complexity of filtering parcels = O(nParcels)
-// total = O(nUsers) + O(nParcels)
+// total = O(nParcels) + O(nUsers)
 def findParcelsForUsersWithHash(parcels: List[Parcel], users: List[User]): List[Parcel] = {
   val hashedUsers = users.toSet
   parcels.filter(p => users.contains(p.userId))
