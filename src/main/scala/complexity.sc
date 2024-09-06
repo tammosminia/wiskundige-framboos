@@ -7,7 +7,7 @@ case class Parcel(parcelId: Int, userId: Int)
 // nUsers = length(users)
 // complexity = O(nParcels * nUsers)
 def findParcelsForUsers(parcels: List[Parcel], users: List[User]): List[Parcel] =
-  parcels.filter(p => users.contains(p.userId))
+  parcels.filter(p => users.exists(_.userId == p.userId))
 
 // complexity of sort = O(n log n)
 // complexity of sorting users = O(nUsers * log nUsers)
@@ -15,7 +15,7 @@ def findParcelsForUsers(parcels: List[Parcel], users: List[User]): List[Parcel] 
 // total = O(nParcels * log nUsers) + O(nUsers * log nUsers)
 def findParcelsForUsersWithSort(parcels: List[Parcel], users: List[User]): List[Parcel] = {
   val sortedUsers = users.sortBy(_.userId) // complexity of sort = O(n log n)
-  parcels.filter(p => users.contains(p.userId))
+  parcels.filter(p => sortedUsers.exists(_.userId == p.userId))
 }
 
 // complexity of HashSet.contains is O(1) if it used a decent hashing function
@@ -24,6 +24,6 @@ def findParcelsForUsersWithSort(parcels: List[Parcel], users: List[User]): List[
 // complexity of filtering parcels = O(nParcels)
 // total = O(nParcels) + O(nUsers)
 def findParcelsForUsersWithHash(parcels: List[Parcel], users: List[User]): List[Parcel] = {
-  val hashedUsers = users.toSet
+  val hashedUsers = users.map(_.userId).toSet
   parcels.filter(p => users.contains(p.userId))
 }
