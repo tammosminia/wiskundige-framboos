@@ -17,7 +17,6 @@ case class Step(direction: Direction, destination: Location)
 type Path = List[Step]
 
 // Helper functions
-def go(from: Location, d: Direction): Location = ???
 def takeStep(from: Location, d: Direction): Step = ???
 def randomElement[T](l: Iterable[T]): T = ???
 def pathLeadsTo(maze: Maze, path: Path): Location = path.lastOption.map(_.destination).getOrElse(maze.start)
