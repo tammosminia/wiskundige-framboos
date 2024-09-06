@@ -25,5 +25,5 @@ def findParcelsForUsersWithSort(parcels: List[Parcel], users: List[User]): List[
 // total = O(nParcels) + O(nUsers)
 def findParcelsForUsersWithHash(parcels: List[Parcel], users: List[User]): List[Parcel] = {
   val hashedUsers = users.map(_.userId).toSet
-  parcels.filter(p => users.contains(p.userId))
+  parcels.filter(p => hashedUsers.contains(p.userId))
 }
